@@ -1,0 +1,48 @@
+import copy
+import random
+# Consider using the modules imported above.
+
+class Hat:
+  def __init__(self,**dic_balls):
+    self.contents=[]
+    for color,times in dic_balls.items():
+      for num in range(times):
+        self.contents.append(color)
+  #print(self.contents)
+
+  def draw(self,no_balls):
+    if no_balls>len(self.contents):
+      return self.contents
+    else:
+      chosen=random.choices(self.contents,k=no_balls)
+      for ball in chosen:
+        if ball in self.contents:
+          self.contents.remove(ball)
+      return chosen
+
+def experiment(hat, expected_balls, num_balls_drawn, num_experiments):
+  correct_experiments=0
+
+  for attempt in range(num_experiments):
+    hat_copy=copy.deepcopy(hat)
+    taken=hat_copy.draw(num_balls_drawn)
+  #print('hola: ',hat_copy.contents)
+  #print(taken)
+    taken_dic=dict()
+    correct=False
+    for color in taken:
+      if color not in taken_dic:
+        taken_dic[color]=taken.count(color)
+      else:
+        taken_dic[color]=taken_dic[color]+1
+    correct=True
+    for color_ex, times_ex in expected_balls.items():
+      taken_count=taken_dic.get(color_ex,0)
+      if taken_count<times_ex:
+        correct=False
+        break
+    if correct:
+      correct_experiments+=1
+
+  probability= correct_experiments/num_experiments
+  return probability
